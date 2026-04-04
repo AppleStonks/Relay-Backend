@@ -1,0 +1,7 @@
+Dockerfile
+docker-compose*
+.gitignore
+README.md
+test/**
+docs/**
+.openapi-generator-ignore

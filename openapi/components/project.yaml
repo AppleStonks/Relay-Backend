@@ -1,0 +1,16 @@
+Project:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    name:
+      type: string
+      example: Payments Platform
+    team_id:
+      type: integer
+      example: 2
+  required:
+    - id
+    - name
+    - team_id

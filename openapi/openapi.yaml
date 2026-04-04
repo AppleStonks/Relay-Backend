@@ -11,6 +11,10 @@ info:
 tags:
   - name: Auth
     description: Demo login for role-based access
+  - name: Batons
+    description: Units of work — imported from Jira and enriched with handover data
+  - name: Projects
+    description: Projects that group related batons
 
 paths:
 
@@ -43,7 +47,151 @@ paths:
               schema:
                 $ref: "./components/common.yaml#/Error"
 
+  # ─────────────────────────────────────────
+  # Batons
+  # ─────────────────────────────────────────
 
+  /batons:
+    get:
+      tags: [Batons]
+      summary: Get batons, optionally filtered by owner, project, or team
+      operationId: listBatons
+      parameters:
+        - name: owner_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter batons by current owner
+        - name: project_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter batons by project
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter batons by team
+      responses:
+        "200":
+          description: List of matching batons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./components/baton.yaml#/Baton"
 
+  /batons/{batonId}:
+    get:
+      tags: [Batons]
+      summary: Get a specific baton by ID
+      operationId: getBaton
+      parameters:
+        - name: batonId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Baton found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/baton.yaml#/Baton"
+        "404":
+          description: Baton not found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/common.yaml#/Error"
 
-  
+    patch:
+      tags: [Batons]
+      summary: Update editable fields of a baton
+      operationId: updateBaton
+      parameters:
+        - name: batonId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/baton.yaml#/BatonUpdate"
+      responses:
+        "200":
+          description: Baton updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/baton.yaml#/Baton"
+        "404":
+          description: Baton not found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/common.yaml#/Error"
+
+  # ─────────────────────────────────────────
+  # Projects
+  # ─────────────────────────────────────────
+  /projects:
+    get:
+      tags: [Projects]
+      summary: Get projects, optionally filtered by person or team
+      operationId: listProjects
+      parameters:
+        - name: person_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter projects associated with a specific person
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter projects belonging to a specific team
+      responses:
+        "200":
+          description: List of matching projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./components/project.yaml#/Project"
+
+  /projects/{projectId}:
+    get:
+      tags: [Projects]
+      summary: Get a specific project by ID
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/project.yaml#/Project"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/common.yaml#/Error"

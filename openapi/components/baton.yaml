@@ -1,0 +1,103 @@
+Baton:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+    project_id:
+      type: integer
+      example: 2
+    owner_id:
+      type: integer
+      example: 5
+    successor_ids:
+      type: array
+      items:
+        type: integer
+      example: [7, 9]
+    title:
+      type: string
+      example: Updating CI/CD config
+    description:
+      type: string
+      example: Add new stage to pipeline
+    status:
+      type: string
+      example: in_progress
+    detailed_context:
+      type: string
+      example: Adding a new sonarqube stage in the pipeline for code static analysis
+    implementation_state:
+      type: string
+      example: Still adding the config to the pipeline file
+    repo_link:
+      type: string
+      format: uri
+      example: https://github.com/example
+    branch_name:
+      type: string
+      example: feature/add-sonarqube-stage-to-pipeline
+    daily_logs:
+      type: array
+      items:
+        $ref: "#/DailyLogEntry"
+    additional_resources:
+      type: string
+      example: Confluence page link and test notes
+  required:
+    - id
+    - created_at
+    - updated_at
+    - project_id
+    - owner_id
+    - title
+    - baton_status
+  
+DailyLogEntry:
+  type: object
+  properties:
+    date:
+      type: string
+      format: date
+      example: 2026-04-04
+    note:
+      type: string
+      example: Finished retry logic and updated tests
+  required:
+    - date
+    - note
+
+BatonUpdate:
+  type: object
+  properties:
+    successor_ids:
+      type: array
+      items:
+        type: integer
+    title:
+      type: string
+    description:
+      type: string
+    status:
+      type: string
+    detailed_context:
+      type: string
+    implementation_state:
+      type: string
+    repo_link:
+      type: string
+      format: uri
+    branch_name:
+      type: string
+    daily_logs:
+      type: array
+      items:
+        $ref: "#/DailyLogEntry"
+    additional_resources:
+      type: string
