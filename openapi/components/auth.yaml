@@ -1,0 +1,30 @@
+LoginRequest:
+  type: object
+  properties:
+    username:
+      type: string
+      example: engineer
+    password:
+      type: string
+      example: engineer123
+  required:
+    - username
+    - password
+  
+LoginResponse:
+  type: object
+  properties:
+    user_id:
+      type: integer
+    name:
+      type: string
+    role:
+      type: string
+      enum:
+        - engineer
+        - team_lead
+        - resilience_manager
+  required:
+    - user_id
+    - name
+    - role

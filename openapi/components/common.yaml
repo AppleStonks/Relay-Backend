@@ -1,0 +1,7 @@
+Error:
+  type: object
+  properties:
+    detail:
+      type: string
+  required:
+    - detail

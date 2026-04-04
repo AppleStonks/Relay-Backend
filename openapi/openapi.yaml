@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: Relay API
+  description: |
+    Continuity handover dashboard for critical operations during pandemic
+    disruption. Supports Operational Resilience Managers, Technology Team
+    Leads, and Software Engineers in tracking task ownership, documentation
+    readiness, and substitution capability.
+  version: 1.0.0
+
+tags:
+  - name: Auth
+    description: Demo login for role-based access
+
+paths:
+
+  # ─────────────────────────────────────────
+  # AUTH
+  # ─────────────────────────────────────────
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Log in with demo credentials
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/auth.yaml#/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "./components/auth.yaml#/LoginResponse"
+        "401":
+          description: Invalid username or password
+          content:
+            application/json:
+              schema:
+                $ref: "./components/common.yaml#/Error"
+
+
+
+
+  
