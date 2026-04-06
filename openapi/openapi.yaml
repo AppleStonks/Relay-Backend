@@ -85,6 +85,24 @@ paths:
                 items:
                   $ref: "./components/baton.yaml#/Baton"
 
+    post:
+      tags: [Batons]
+      summary: Create a new baton
+      operationId: createBaton
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/baton.yaml#/BatonCreate"
+      responses:
+        "201":
+          description: Baton created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/baton.yaml#/Baton"
+
   /batons/{batonId}:
     get:
       tags: [Batons]
@@ -109,23 +127,7 @@ paths:
             application/json:
               schema:
                 $ref: "./components/common.yaml#/Error"
-    post:
-      tags: [Batons]
-      summary: Create a new baton
-      operationId: createBaton
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "./components/baton.yaml#/BatonCreate"
-      responses:
-        "201":
-          description: Baton created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "./components/baton.yaml#/Baton"
+
 
     patch:
       tags: [Batons]
