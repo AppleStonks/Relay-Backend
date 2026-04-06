@@ -6,7 +6,7 @@ Project:
       example: 1
     name:
       type: string
-      example: Payments Platform
+      example: Transaction  Platform
     team_id:
       type: integer
       example: 2

@@ -1,4 +1,12 @@
-.venv
+# SQLite database
+relay.db
+*.db
+
+# Python cache
 __pycache__/
+*.pyc
+
+# Other Files/Folders
+.venv
 .idea
 /generated-docs

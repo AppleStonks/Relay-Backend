@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text, Boolean
+from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
@@ -67,4 +67,4 @@ class Baton(Base):
         default=list,
     )
 
-    baton_status: Mapped[str] = mapped_column(Boolean, nullable=False)
+    baton_status: Mapped[str] = mapped_column(String, nullable=False)
