@@ -27,9 +27,6 @@ Baton:
     description:
       type: string
       example: Add new stage to pipeline
-    status:
-      type: string
-      example: in_progress
     detailed_context:
       type: string
       example: Adding a new sonarqube stage in the pipeline for code static analysis
@@ -48,8 +45,12 @@ Baton:
       items:
         $ref: "#/DailyLogEntry"
     additional_resources:
+      type: array
+      items:
+        $ref: "#/AdditonalResources"
+    baton_status:
       type: string
-      example: Confluence page link and test notes
+      example: in_progress
   required:
     - id
     - created_at
@@ -73,6 +74,23 @@ DailyLogEntry:
     - date
     - note
 
+DailyLogEntry:
+  type: object
+  properties:
+    type:
+      type: string
+      example: confluence
+    title:
+      type: string
+      example: Payment Failure Scenarios
+    url:
+      type: string
+      example: https://confluence.example.com/x/payment-scenarios
+  required:
+    - properties
+    - title
+    - url
+
 BatonUpdate:
   type: object
   properties:
@@ -83,8 +101,6 @@ BatonUpdate:
     title:
       type: string
     description:
-      type: string
-    status:
       type: string
     detailed_context:
       type: string
@@ -100,4 +116,57 @@ BatonUpdate:
       items:
         $ref: "#/DailyLogEntry"
     additional_resources:
+      type: array
+      items:
+        $ref: "#/AdditonalResources"
+    baton_status:
       type: string
+      example: in_progress
+
+BatonCreate:
+  type: object
+  properties:
+    project_id:
+      type: integer
+      example: 1
+    owner_id:
+      type: integer
+      example: 2
+    title:
+      type: string
+      example: Legacy Payment Gateway Decommissioning
+    baton_status:
+      type: string
+      example: awaiting_handover
+    successor_ids:
+      type: array
+      items:
+        type: integer
+      example: [3, 4]
+    description:
+      type: string
+      example: Migrate the remaining enterprise traffic to the new gateway.
+    detailed_context:
+      type: string
+      example: Adapter layer is complete. Final client cutover remains.
+    implementation_state:
+      type: string
+      example: Ready for Migration
+    repo_link:
+      type: string
+      format: uri
+      example: https://github.com/example/legacy-bridge
+    branch_name:
+      type: string
+      example: migration/enterprise-adapter-final
+    additional_resources:
+      type: array
+      items:
+        type: object
+  required:
+    - project_id
+    - owner_id
+    - title
+    - baton_status
+    - successor_ids
+    - description
