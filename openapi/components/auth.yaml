@@ -21,7 +21,7 @@ LoginResponse:
     role:
       type: string
       enum:
-        - engineer
+        - softeware_engineer
         - team_lead
         - resilience_manager
   required:
