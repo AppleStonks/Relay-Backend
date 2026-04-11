@@ -68,3 +68,11 @@ class Baton(Base):
     )
 
     baton_status: Mapped[str] = mapped_column(String, nullable=False)
+
+    dependencies: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    related_systems: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    troubleshooting_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    reconstruction_time: Mapped[int | None] = mapped_column(Integer, nullable=True)

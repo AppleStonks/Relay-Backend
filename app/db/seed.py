@@ -50,7 +50,6 @@ def seed_db():
             in_office=True,
         )
 
-        
         software_engineer_3 = Person(
             name="Dora Crum",
             username="dora",
@@ -78,9 +77,17 @@ def seed_db():
             in_office=True,
         )
 
-        db.add_all([software_engineer, software_engineer_2, software_engineer_3, team_lead, resilience_manager])
+        db.add_all([
+            software_engineer,
+            software_engineer_2,
+            software_engineer_3,
+            team_lead,
+            resilience_manager,
+        ])
         db.commit()
         db.refresh(software_engineer)
+        db.refresh(software_engineer_2)
+        db.refresh(software_engineer_3)
         db.refresh(team_lead)
         db.refresh(resilience_manager)
 
@@ -92,17 +99,22 @@ def seed_db():
             title="Add AWS Aurora DB for Payments Platform",
             description="Provisioning a high-availability Aurora PostgreSQL cluster for payment transaction persistence.",
             baton_status="in_progress",
-
             detailed_context=(
                 "The cluster is being configured with a primary and one reader instance in 'eu-west-1'. "
                 "We are using KMS for encryption at rest. Currently blocked on VPC peering request #992 "
                 "to allow the payments-service to reach the new subnet."
             ),
-            
             implementation_state="Development",
+            dependencies="VPC peering request #992, KMS key policy approval, Terraform networking module update",
+            related_systems="payments-service, Aurora PostgreSQL, AWS KMS, VPC peering, CloudWatch",
+            troubleshooting_notes=(
+                "If the payments-service cannot connect, first verify the security group ingress rules and "
+                "VPC route tables. Then check whether the subnet group was created in the correct AZs. "
+                "If Terraform apply fails, rerun after confirming no stale state lock exists."
+            ),
+            reconstruction_time=45,
             repo_link="https://github.com/example/relay-core",
             branch_name="feature/payment-retry",
-            
             daily_logs=[
                 {
                     "date": "2026-04-05",
@@ -111,11 +123,8 @@ def seed_db():
                 {
                     "date": "2026-04-06",
                     "note": "Configured Terraform scripts for RDS subnet groups and security groups.",
-
                 }
             ],
-
-
             additional_resources=[
                 {
                     "type": "confluence",
@@ -133,8 +142,6 @@ def seed_db():
                     "url": "https://github.com/example/docs/runbooks/aurora-migration.md"
                 }
             ],
-
-
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
         )
@@ -146,17 +153,22 @@ def seed_db():
             title="Legacy Payment Gateway Decommissioning",
             description="Migrating the final 5% of traffic from the SOAP-based legacy gateway to the new REST API.",
             baton_status="awaiting_handover",
-            
             detailed_context=(
                 "All 'Standard' and 'Express' merchant types have been migrated. "
                 "The remaining 5% consists of 'Enterprise' clients with custom header requirements. "
                 "The adapter layer is written; we just need to flip the feature flag for the 'Acme Corp' test account."
             ),
-            
             implementation_state="Ready for Migration",
+            dependencies="Enterprise client sign-off, feature flag rollout, UAT validation for Acme Corp",
+            related_systems="legacy SOAP gateway, REST payments API, enterprise adapter layer, feature flag service",
+            troubleshooting_notes=(
+                "If enterprise traffic fails after cutover, disable the feature flag immediately and inspect "
+                "header transformation logs in the adapter layer. Compare incoming SOAP headers against the "
+                "expected REST contract before retrying the rollout."
+            ),
+            reconstruction_time=30,
             repo_link="https://github.com/example/legacy-bridge",
             branch_name="migration/enterprise-adapter-final",
-            
             daily_logs=[
                 {
                     "date": "2026-04-05",
@@ -169,7 +181,6 @@ def seed_db():
                     "author": "Software Engineer"
                 }
             ],
-
             additional_resources=[
                 {
                     "type": "spreadsheet",
@@ -187,7 +198,6 @@ def seed_db():
                     "url": "https://company.slack.com/archives/C123456/p162"
                 }
             ],
-
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
         )
