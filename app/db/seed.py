@@ -42,8 +42,8 @@ def seed_db():
         )
 
         software_engineer_2 = Person(
-            name="Julie Lee",
-            username="lili",
+            name="Andrew Mullins",
+            username="drew",
             password="engineer123",
             role="software_engineer",
             team_id=team.id,
@@ -144,6 +144,7 @@ def seed_db():
             ],
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
+            lifecycle_stage="baton",
         )
 
         baton_2 = Baton(
@@ -200,6 +201,7 @@ def seed_db():
             ],
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
+            lifecycle_stage="baton",
         )
 
         db.add_all([baton_1, baton_2])

@@ -9,6 +9,12 @@ from app.pydantic_schemas.baton_schema import BatonCreate, BatonResponse, BatonU
 
 router = APIRouter()
 
+def determine_lifecycle_stage(baton: Baton) -> str:
+    has_description = bool(baton.description and baton.description.strip())
+    has_successors = bool(baton.successor_ids and len(baton.successor_ids) > 0)
+
+    return "baton" if has_description and has_successors else "imported_ticket"
+
 
 def build_baton_response(db: Session, baton: Baton) -> BatonResponse:
     project = db.query(Project).filter(Project.id == baton.project_id).first()
@@ -37,6 +43,7 @@ def build_baton_response(db: Session, baton: Baton) -> BatonResponse:
         daily_logs=baton.daily_logs,
         additional_resources=baton.additional_resources,
         baton_status=baton.baton_status,
+        lifecycle_stage=baton.lifecycle_stage,
 
         dependencies=baton.dependencies,
         related_systems=baton.related_systems,
@@ -103,6 +110,8 @@ def update_baton(baton_id: int, payload: BatonUpdate, db: Session = Depends(get_
     for field, value in update_data.items():
         setattr(baton, field, value)
 
+    baton.lifecycle_stage = determine_lifecycle_stage(baton)
+
     db.commit()
     db.refresh(baton)
 
@@ -128,7 +137,10 @@ def create_baton(payload: BatonCreate, db: Session = Depends(get_db)):
         related_systems=payload.related_systems,
         troubleshooting_notes=payload.troubleshooting_notes,
         reconstruction_time=payload.reconstruction_time,
+        lifecycle_stage="imported_ticket",
     )
+
+    baton.lifecycle_stage = determine_lifecycle_stage(baton)
 
     db.add(baton)
     db.commit()

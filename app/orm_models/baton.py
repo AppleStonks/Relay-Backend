@@ -76,3 +76,5 @@ class Baton(Base):
     troubleshooting_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     reconstruction_time: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    lifecycle_stage: Mapped[str] = mapped_column(String, nullable=False, default="imported_ticket")

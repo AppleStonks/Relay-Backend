@@ -34,6 +34,7 @@ class BatonResponse(BaseModel):
     title: str
     description: str | None = None
     baton_status: str
+    lifecycle_stage: str
 
     # handover / implementation details
     detailed_context: str | None = None
@@ -54,12 +55,12 @@ class BatonResponse(BaseModel):
 
 class BatonCreate(BaseModel):
     # required core creation fields
-    project_id: int
+    project_id: int 
     owner_id: int
     title: str
     baton_status: str
-    successor_ids: list[int]
-    description: str
+    successor_ids: list[int] | None = None
+    description: str | None = None
 
     # optional handover / implementation details
     detailed_context: str | None = None
