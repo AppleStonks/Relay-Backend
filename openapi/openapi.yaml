@@ -1,26 +1,41 @@
 openapi: 3.0.3
 info:
   title: Relay API
-  description: |
-    Continuity handover dashboard for critical operations during pandemic
-    disruption. Supports Operational Resilience Managers, Technology Team
-    Leads, and Software Engineers in tracking task ownership, documentation
-    readiness, and substitution capability.
+  description: Relay backend API
   version: 1.0.0
 
 tags:
+  - name: System
+    description: Service health/root endpoint
   - name: Auth
-    description: Demo login for role-based access
+    description: Demo login endpoint
   - name: Batons
-    description: Units of work — imported from Jira and enriched with handover data
-  - name: Projects
-    description: Projects that group related batons
+    description: Baton CRUD and workflow state updates
+  - name: Teams
+    description: Team-level risk metrics
+  - name: Divisions
+    description: Division-level risk metrics
+  - name: Persons
+    description: Team member lookup and in-office updates
 
 paths:
-
-  # ─────────────────────────────────────────
-  # AUTH
-  # ─────────────────────────────────────────
+  /:
+    get:
+      tags: [System]
+      summary: Root health endpoint
+      operationId: root
+      responses:
+        "200":
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
 
   /auth/login:
     post:
@@ -47,14 +62,10 @@ paths:
               schema:
                 $ref: "./components/common.yaml#/Error"
 
-  # ─────────────────────────────────────────
-  # Batons
-  # ─────────────────────────────────────────
-
   /batons:
     get:
       tags: [Batons]
-      summary: Get batons, optionally filtered by owner, project, or team
+      summary: List batons (optional owner/project/team filters)
       operationId: listBatons
       parameters:
         - name: owner_id
@@ -62,32 +73,28 @@ paths:
           required: false
           schema:
             type: integer
-          description: Filter batons by current owner
         - name: project_id
           in: query
           required: false
           schema:
             type: integer
-          description: Filter batons by project
         - name: team_id
           in: query
           required: false
           schema:
             type: integer
-          description: Filter batons by team
       responses:
         "200":
-          description: List of matching batons
+          description: Matching batons
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "./components/baton.yaml#/Baton"
-
     post:
       tags: [Batons]
-      summary: Create a new baton
+      summary: Create baton
       operationId: createBaton
       requestBody:
         required: true
@@ -97,26 +104,26 @@ paths:
               $ref: "./components/baton.yaml#/BatonCreate"
       responses:
         "201":
-          description: Baton created successfully
+          description: Baton created
           content:
             application/json:
               schema:
                 $ref: "./components/baton.yaml#/Baton"
 
-  /batons/{batonId}:
+  /batons/{baton_id}:
     get:
       tags: [Batons]
-      summary: Get a specific baton by ID
+      summary: Get baton by id
       operationId: getBaton
       parameters:
-        - name: batonId
+        - name: baton_id
           in: path
           required: true
           schema:
             type: integer
       responses:
         "200":
-          description: Baton found
+          description: Baton
           content:
             application/json:
               schema:
@@ -127,14 +134,12 @@ paths:
             application/json:
               schema:
                 $ref: "./components/common.yaml#/Error"
-
-
     patch:
       tags: [Batons]
-      summary: Update editable fields of a baton
+      summary: Update baton
       operationId: updateBaton
       parameters:
-        - name: batonId
+        - name: baton_id
           in: path
           required: true
           schema:
@@ -147,7 +152,7 @@ paths:
               $ref: "./components/baton.yaml#/BatonUpdate"
       responses:
         "200":
-          description: Baton updated successfully
+          description: Updated baton
           content:
             application/json:
               schema:
@@ -159,58 +164,183 @@ paths:
               schema:
                 $ref: "./components/common.yaml#/Error"
 
-  # ─────────────────────────────────────────
-  # Projects
-  # ─────────────────────────────────────────
-  /projects:
+  /teams/risk:
     get:
-      tags: [Projects]
-      summary: Get projects, optionally filtered by person or team
-      operationId: listProjects
+      tags: [Teams]
+      summary: Team risk metrics
+      operationId: getTeamRisk
       parameters:
-        - name: person_id
-          in: query
-          required: false
-          schema:
-            type: integer
-          description: Filter projects associated with a specific person
         - name: team_id
           in: query
           required: false
           schema:
             type: integer
-          description: Filter projects belonging to a specific team
       responses:
         "200":
-          description: List of matching projects
+          description: Team risk rows
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "./components/project.yaml#/Project"
+                  $ref: "#/components/schemas/TeamRiskResponse"
 
-  /projects/{projectId}:
+  /division/risk:
     get:
-      tags: [Projects]
-      summary: Get a specific project by ID
-      operationId: getProject
+      tags: [Divisions]
+      summary: Division risk metrics
+      operationId: getDivisionRisk
       parameters:
-        - name: projectId
+        - name: division_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Division risk rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DivisionRiskResponse"
+
+  /people:
+    get:
+      tags: [Persons]
+      summary: List people (optional team filter)
+      operationId: listPeople
+      parameters:
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: People rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonResponse"
+
+  /person/{person_id}:
+    get:
+      tags: [Persons]
+      summary: Get person by id
+      operationId: getPerson
+      parameters:
+        - name: person_id
           in: path
           required: true
           schema:
             type: integer
       responses:
         "200":
-          description: Project found
+          description: Person row
           content:
             application/json:
               schema:
-                $ref: "./components/project.yaml#/Project"
+                $ref: "#/components/schemas/PersonResponse"
         "404":
-          description: Project not found
+          description: Person not found
           content:
             application/json:
               schema:
                 $ref: "./components/common.yaml#/Error"
+    patch:
+      tags: [Persons]
+      summary: Update in-office flag
+      operationId: updatePerson
+      parameters:
+        - name: person_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonUpdate"
+      responses:
+        "200":
+          description: Updated person
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PersonResponse"
+        "404":
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/common.yaml#/Error"
+
+components:
+  schemas:
+    TeamRiskResponse:
+      type: object
+      properties:
+        team_id: { type: integer }
+        team_name: { type: string }
+        division_id: { type: integer }
+        division_name: { type: string }
+        staff_availability_percentage: { type: integer }
+        unassigned_baton_count: { type: integer }
+        delivery_delay_risk: { type: string }
+        overall_risk_score: { type: integer }
+      required:
+        - team_id
+        - team_name
+        - division_id
+        - division_name
+        - staff_availability_percentage
+        - unassigned_baton_count
+        - delivery_delay_risk
+        - overall_risk_score
+
+    DivisionRiskResponse:
+      type: object
+      properties:
+        division_id: { type: integer }
+        division_name: { type: string }
+        staff_availability_percentage: { type: integer }
+        batons_ready_for_handover: { type: integer }
+        batons_unassigned: { type: integer }
+        overall_risk_score: { type: integer }
+      required:
+        - division_id
+        - division_name
+        - staff_availability_percentage
+        - batons_ready_for_handover
+        - batons_unassigned
+        - overall_risk_score
+
+    PersonResponse:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        username: { type: string }
+        role: { type: string }
+        team_id: { type: integer }
+        in_office: { type: boolean }
+      required:
+        - id
+        - name
+        - username
+        - role
+        - team_id
+        - in_office
+
+    PersonUpdate:
+      type: object
+      properties:
+        in_office: { type: boolean }
+      required:
+        - in_office

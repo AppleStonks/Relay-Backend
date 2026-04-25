@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 class DailyLogEntry(BaseModel):
     date: str
     note: str
+    author: str | None = None
 
 
 class BatonResponse(BaseModel):
@@ -35,6 +36,7 @@ class BatonResponse(BaseModel):
     description: str | None = None
     baton_status: str
     lifecycle_stage: str
+    risk_label: str
 
     # handover / implementation details
     detailed_context: str | None = None
@@ -78,6 +80,7 @@ class BatonCreate(BaseModel):
 
 class BatonUpdate(BaseModel):
     # ownership / core editable fields
+    owner_id: int | None = None
     successor_ids: list[int] | None = None
     title: str | None = None
     description: str | None = None
